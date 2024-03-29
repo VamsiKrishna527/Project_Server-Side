@@ -5,9 +5,14 @@ class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actors
         fields=('id','name','age','nationality')
+        # fields=('id')
 
 class MovieSerializer(serializers.ModelSerializer):
-    actors = ActorSerializer(many=True, required=False)
+    actor_id = serializers.IntegerField()
     class  Meta:
         model = Movies
-        fields=('title','genre','rating', 'actors')
+        fields=('title','genre','rating', 'actor_id')
+    def create(self, validated_data):
+        actor_id = validated_data.pop('actor_id')
+        movie_instance = Movies.objects.create(actor_id=actor_id, **validated_data)
+        return movie_instance
