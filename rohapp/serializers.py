@@ -8,11 +8,13 @@ class ActorSerializer(serializers.ModelSerializer):
         # fields=('id')
 
 class MovieSerializer(serializers.ModelSerializer):
-    actor_id = serializers.IntegerField()
+    # actor_id = serializers.IntegerField()
     class  Meta:
         model = Movies
-        fields=('title','genre','rating', 'actor_id')
-    def create(self, validated_data):
-        actor_id = validated_data.pop('actor_id')
-        movie_instance = Movies.objects.create(actor_id=actor_id, **validated_data)
-        return movie_instance
+        fields=('title','genre','rating', 'actor_id','release_date','budget','collections')
+
+class PostMovieSerializer(serializers.ModelSerializer):
+    actor_id = serializers.IntegerField()
+    class Meta:
+        model = Movies
+        fields = ('title', 'genre', 'rating', 'actor_id')

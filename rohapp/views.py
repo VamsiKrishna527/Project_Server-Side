@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Actors, Movies
-from .serializers import ActorSerializer, MovieSerializer
+from .serializers import ActorSerializer, MovieSerializer, PostMovieSerializer
 from rest_framework.decorators import api_view
 
 
@@ -41,7 +41,7 @@ class MoviesList(generics.ListCreateAPIView):
 #         return Response(movie_serializer.errors, status=400)
 
 class CreateMovieView(generics.CreateAPIView):
-    serializer_class = MovieSerializer
+    serializer_class = PostMovieSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -50,3 +50,19 @@ class CreateMovieView(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class ActorMovieDeleteView(generics.DestroyAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+    def delete(self, request, *args, **kwargs):
+        movie_name = request.data.get('movie_name')  # pass the movie name in the request data
+        actor_id = request.data.get('actor_id')
+        print(movie_name,actor_id)
+        try:
+            movie = self.queryset.get(title=movie_name, actor_id=actor_id)
+            movie.delete()
+            return Response({"message": "Movie details deleted from actor successfully."}, status=status.HTTP_204_NO_CONTENT)
+        except Movies.DoesNotExist:
+            return Response({"error": "Movie not found for the actor."}, status=status.HTTP_404_NOT_FOUND)
