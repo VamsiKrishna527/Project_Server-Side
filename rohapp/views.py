@@ -66,3 +66,27 @@ class ActorMovieDeleteView(generics.DestroyAPIView):
             return Response({"message": "Movie details deleted from actor successfully."}, status=status.HTTP_204_NO_CONTENT)
         except Movies.DoesNotExist:
             return Response({"error": "Movie not found for the actor."}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class MovieUpdateView(generics.UpdateAPIView):
+    queryset = Movies.objects.all()
+    serializer_class = MovieSerializer
+
+    def put(self, request, *args, **kwargs):
+        movie_name = request.data.get('movie_name')
+        actor_id = request.data.get('actor_id')
+        new_movie_data = request.data.get('new_movie_data')  # updated movie data
+
+        try:
+            # Find the movie based on provided movie name and actor ID
+            movie = self.queryset.get(title=movie_name, actor_id=actor_id)
+        except Movies.DoesNotExist:
+            return Response({"error": "Movie not found for the actor."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update the movie details with the new data
+        serializer = self.get_serializer(movie, data=new_movie_data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
