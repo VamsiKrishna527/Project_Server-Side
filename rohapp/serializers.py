@@ -15,6 +15,11 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movies
         fields=('title','genre','rating', 'actor_id','release_date','budget','collections')
 
+class PostActorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Actors
+        fields = ('name', 'birthdate', 'nationality', 'marital_status', 'spouse', 'parents', 'siblings', 'upcoming_movie', 'description', 'picture_url' )
+
 class PostMovieSerializer(serializers.ModelSerializer):
     actor_id = serializers.IntegerField()
     class Meta:
@@ -29,8 +34,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password', 'name']
 
+    # def create(self, validated_data):
+    #     user = User.objects.create_user(**validated_data)
+    #     return user
     def create(self, validated_data):
+        name = validated_data.pop('name', None)
         user = User.objects.create_user(**validated_data)
+        if name:
+            user.name = name
+            user.save()
         return user
     
 class UserLoginSerializer(serializers.Serializer):

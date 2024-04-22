@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Actors, Movies
-from .serializers import ActorSerializer, MovieSerializer, PostMovieSerializer, UserRegistrationSerializer, UserLoginSerializer
+from .serializers import ActorSerializer, MovieSerializer, PostActorSerializer, PostMovieSerializer, UserRegistrationSerializer, UserLoginSerializer
 #from rest_framework.decorators import api_view
 
 from rest_framework.views import APIView
@@ -25,6 +25,10 @@ class MoviesList(generics.ListCreateAPIView):
     queryset = Movies.objects.all()
     serializer_class = MovieSerializer
 
+class CreateActorView(generics.CreateAPIView):
+    serializer_class = PostActorSerializer
+    def perform_create(self, serializer):
+        serializer.save()
 #@api_view(['POST'])
  #def create_movie_for_actor(request):
     # actor_id = request.data.get('actor_id')
