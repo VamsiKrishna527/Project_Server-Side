@@ -40,10 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rohapp',
     'rest_framework',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -132,3 +134,6 @@ REST_FRAMEWORK = {'DEFAULT_RENDERER_CLASSES':['rest_framework.renderers.JSONRend
 
 SIMPJWT_TOKEN_LIFETIME = timedelta(minutes=15)
 SIMPJWT_REFRESH_TOKEN_LIFETIME = timedelta(minutes=15)
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (' http://localhost:3000',)
